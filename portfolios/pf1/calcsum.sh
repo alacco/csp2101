@@ -3,7 +3,7 @@
 
 #!/bin/bash
 
-# calculte the sum of the three integers enter on the command line
+# calculte the sum of the three integers entered on the command line
 result=$(($1+$2+$3))
 
 # Check if the sum of the entered integers is equal to or less then 30 
