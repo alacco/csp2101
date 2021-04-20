@@ -3,17 +3,17 @@
 
 #!/bin/bash
 
-# calculte the sum of the three integers entered on the command line
+# Calculate the sum of the three integers entered on the command line
 result=$(($1+$2+$3))
 
 # Check if the sum of the entered integers is equal to or less then 30 
-# and display required output else display error message
+# and display required output else display exceeds maximum allowable message
 if [[ "$result" -le 30 ]]; then
   echo "The sum of $1 and $2 and $3 is $result"
 else
-  echo "Sum esceeds maximum allowable"
+  echo "Sum exceeds maximum allowable"
 fi
 
-# Exit script if no errors occourd 
+# Exit script if no errors occurred 
 exit 0
 
