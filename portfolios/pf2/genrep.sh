@@ -5,7 +5,7 @@
 
 attackTypes=("DDOS" "MALWARE" "XSS" "SQL-INJ" "MitM")
 
-echo -e "Attacks\t\t\tInstances(Q3)"
+echo -e "Attacks\t\tInstances(Q3)"
 for i in ${!attackTypes[@]}; 
 do
     grep -iw "${attackTypes[$i]}" attacks.html | 
