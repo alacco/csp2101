@@ -8,7 +8,7 @@ validateMenuSelection() {
         validMenuInput=true
     else
         validMenuInput=false
-        echo -e '\nInvalid input'
+        echo -e "\n\e[1;31mInvalid input\e[0m"
     fi
 }
 
@@ -17,7 +17,7 @@ echo 'Welcome to the Linux admin log analysis utility.'
 echo '================================================'
 
 until [ "$validMenuInput" = true ]; do
-    echo -e '\n=================================='
+    echo -e '\n==================================='
     echo -e '             Main Menu              '
     echo -e '===================================\n'
     echo -e 'Select from the following options:\n'
@@ -50,7 +50,7 @@ fieldListArray=("PROTOCOL" "SRC IP" "SRC PORT" "DEST IP" "DEST PORT" "PACKETS" "
 
 for (( i=1; i<=$fieldMenuSelection; i++)); do
     validMenuInput=false # Set vaildMenuInput back to false
-    selectedField1=0
+    
     until [ "$validMenuInput" = true ]; do
         echo -e '\n==================================='
         echo -e "      Field $i search columns"
@@ -91,17 +91,47 @@ for (( i=1; i<=$fieldMenuSelection; i++)); do
     fieldListArray=( "${fieldListArray[@]:0:$(($searchColumnMenuSelection-1))}" "${fieldListArray[@]:$searchColumnMenuSelection}" )
    
 done
-
+# remove after testing
 echo ${searchDetailsArray[field1]} ${searchDetailsArray[search1]}
 echo ${searchDetailsArray[field2]} ${searchDetailsArray[search2]}
 echo ${searchDetailsArray[field3]} ${searchDetailsArray[search3]}
 
+validMenuInput=false # Set vaildMenuInput back to false
+until [ "$validMenuInput" = true ]; do
+    echo -e '\n==================================='
+    echo -e "   Select server access log menu    "
+    echo -e '===================================\n'
+    echo -e 'Select from the following options:\n'
+    echo -e '(1) Search one server access log'
+    echo -e '(2) Search all server access logs\n'
+    read -p 'Enter 1 or 2: ' selectAccessLogMenuSelection
 
-#printf '%s\n' "${selectedFieldsArray[@]}"
+    validateMenuSelection $selectAccessLogMenuSelection 2
+
+done
 
 
-#echo $firstField
-#echo $secondField
-#echo $thirdField
+IFS='
+'
+accessLogFilenameArray=($(ls *.csv))
+
+if [ $selectAccessLogMenuSelection = 1 ]; then
+    validMenuInput=false # Set vaildMenuInput back to false
+    until [ "$validMenuInput" = true ]; do
+        echo -e '\nSelect which log file to search:\n'
+        for ((j=0; j<=${#accessLogFilenameArray[@]}-1; j++)); do
+            echo -e "($(($j+1))) ${accessLogFilenameArray[$j]}"
+        done
+        echo ''
+        read -p "Enter [1-${#accessLogFilenameArray[@]}]: " selectedAccessLogMenuSelection
+        validateMenuSelection $selectedAccessLogMenuSelection ${#accessLogFilenameArray[@]}
+    done
+
+    accessLogSelected=${accessLogFilenameArray[$(($selectedAccessLogMenuSelection-1))]}
+
+    echo -e "\nSearching $accessLogSelected access log file\n"
+else
+    echo -e "\nSearching all access log files\n"
+fi
 
 exit 0
