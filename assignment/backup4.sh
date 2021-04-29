@@ -23,38 +23,41 @@ validateNumberInput() {
 
 searchFunction() {
     case ${searchDetailsArray[field$(($1))]} in
-        'PROTOCOL') echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","; RS"\r\n"} $3 ~ searchData { printf "%s\n", $0; }';;
-          'SRC IP') echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $4 ~ toupper(searchData) { printf "%s\n", $0; }';; 
-        'SRC PORT') echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $5 == searchData { printf "%s\n", $0; }';;
-         'DEST IP') echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $6 ~ toupper(searchData) { printf "%s\n", $0; }';;
-       'DEST PORT') echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $7 == searchData && $13 != "normal" { printf "%s\n", $0; }';;
+        'PROTOCOL') foundData$(($1))=`echo $2 | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","; RS="\r\n"} NR>1 && $3 ~ searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'`;;
+          'SRC IP') awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $4 ~ toupper(searchData) { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }';; 
+        'SRC PORT') awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $5 == searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }';;
+         'DEST IP') awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $6 ~ toupper(searchData) { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }';;
+       'DEST PORT') awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $7 == searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }';;
          'PACKETS') if [[ ${searchDetailsArray[operator$(($1))]} = '-eq' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $8 == searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $8 == searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     elif [[ ${searchDetailsArray[operator$(($1))]} = '-gt' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $8 > searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $8 > searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     elif [[ ${searchDetailsArray[operator$(($1))]} = '-lt' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $8 < searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $8 < searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     elif [[ ${searchDetailsArray[operator$(($1))]} = '-!eq' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $8 != searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $8 != searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     fi;;
            'BYTES') if [[ ${searchDetailsArray[operator$(($1))]} = '-eq' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $9 == searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $9 == searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     elif [[ ${searchDetailsArray[operator$(($1))]} = '-gt' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $9 > searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $9 > searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     elif [[ ${searchDetailsArray[operator$(($1))]} = '-lt' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $9 < searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $9 < searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     elif [[ ${searchDetailsArray[operator$(($1))]} = '-!eq' ]]; then
-                        echo "$2" | awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} $9 != searchData { printf "%s\n", $0; }'
+                        awk -v searchData=${searchDetailsArray[search$(($1))]} 'BEGIN {FS=","} NR>1 && $9 != searchData { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
                     fi;;
     esac
-}
 
-outputResults() {
-        echo "+----------+---------------+----------+---------------+-----------+---------+-------+"
-        echo "| PROTOCOL | SRC IP        | SRC PORT | DEST IP       | DEST PORT | PACKETS | BYTES |" 
-        echo "+----------+---------------+----------+---------------+-----------+---------+-------+"
-        echo "$searchResult" | awk 'BEGIN {FS=","; RS"\n"} { printf "| %-8s | %-13s | %-8s | %-13s | %-9s | %-7s | %-5s |\n", $3, $4, $5, $6, $7, $8, $9; }'
-        echo "+----------+---------------+----------+---------------+-----------+---------+-------+"
+    
+   # if [[ ${searchDetailsArray[field$(($1))]} = "PROTOCOL" ]]; then
+   #     # Search for records using PROTOCOL
+   #     grep -i "${searchDetailsArray[search$(($1))]}" #$accessLogSelected
+   # elif [[ ${searchDetailsArray[field$(($1))]} = "SRC IP" ]]; then
+   #     awk 'BEGIN {FS=","}
+   #         $4 ~ /101/ { printf "%s\n", $0; }
+   #         END{}'    
+   # fi
+    
 }
 
 
@@ -173,8 +176,13 @@ until [ "$validMenuInput" = true ]; do
         fi
         # remove previously selected fields from array
         fieldListArray=( "${fieldListArray[@]:0:$(($searchColumnMenuSelection-1))}" "${fieldListArray[@]:$searchColumnMenuSelection}" )
-        numberOfFieldsSelected=$i #$(($numberOfFieldsSelected+1))
+        numberOfFieldsSelected=$(($numberOfFieldsSelected+1))
     done
+
+    # remove after testing
+    #echo ${searchDetailsArray[field1]} ${searchDetailsArray[search1]} ${searchDetailsArray[operator1]}
+    #echo ${searchDetailsArray[field2]} ${searchDetailsArray[search2]} ${searchDetailsArray[operator2]}
+    #echo ${searchDetailsArray[field3]} ${searchDetailsArray[search3]} ${searchDetailsArray[operator3]}
 
     validMenuInput=false # Set vaildMenuInput back to false
     until [ "$validMenuInput" = true ]; do
@@ -208,51 +216,24 @@ until [ "$validMenuInput" = true ]; do
         done
 
         accessLogSelected=${accessLogFilenameArray[$(($selectedAccessLogMenuSelection-1))]}
-        fileData=`cat $accessLogSelected | awk 'BEGIN {FS=","} $13 !~ "normal" { printf "%s\n", $0; }'`
+
         echo -e "\nSearching $accessLogSelected access log file\n"
     else
-        for ((j=0; j<=${#accessLogFilenameArray[@]}-1; j++)); do
-            fileData+=`cat ${accessLogFilenameArray[$j]}`
-        done
         echo -e "\nSearching all access log files\n"
     fi
     validMenuInput=false # Set vaildMenuInput back to false
 
-    
-    if [ $numberOfFieldsSelected = 1 ]; then
-        #searchFunction 1 "$fileData"
-        firstFieldSearch=$(searchFunction 1 "$fileData")
-        searchResult="$firstFieldSearch"
-    elif [ $numberOfFieldsSelected = 2 ]; then
-        firstFieldSearch=$(searchFunction 1 "$fileData")
-        secondFieldSearch=$(searchFunction 2 "$firstFieldSearch")
-        searchResult="$secondFieldSearch"
-    elif [ $numberOfFieldsSelected = 3 ]; then
-        firstFieldSearch=$(searchFunction 1 "$fileData")
-        secondFieldSearch=$(searchFunction 2 "$firstFieldSearch")
-        thirdFieldSearch=$(searchFunction 3 "$secondFieldSearch")
-        searchResult="$thirdFieldSearch"
-    fi
+    echo "+----------+---------------+----------+---------------+-----------+---------+-------+"
+    echo "| PROTOCOL | SRC IP        | SRC PORT | DEST IP       | DEST PORT | PACKETS | BYTES |" 
+    echo "+----------+---------------+----------+---------------+-----------+---------+-------+"
 
-    if [ "$searchResult" != "" ]; then
-        outputResults
-        echo ""
-        read -p "Enter filename to export search: " exportFilename
-        read -p "Enter directory to save file: " exportDirectory
-        
-        if [ ! -e "$exportDirectory" ]; then
-            echo -e '\nDirectory does not exist!'
-            echo -e "Creating directory $exportDirectory"
-            mkdir "$exportDirectory"
-        else
-            echo '\nDirectory already exist'
-        fi
-        
-        echo -e '\nExporting to $exportFilename'
-        cd $exportDirectory
-        outputResults > $exportFilename
-    else
-        echo -e "\e[1;31mNo matching data found\e[0m"
+    if [ $numberOfFieldsSelected = 1 ]; then
+        fileData=`cat $accessLogSelected`
+        searchFunction 1 fileData
+        echo "$foundData1"
+    elif [ $numberOfFieldsSelected = 2 ]; then
+        cat $accessLogSelected | searchFunction 1 | searchFunction 2
     fi
+    echo "+----------+---------------+----------+---------------+-----------+---------+-------+"
 done
 exit 0
