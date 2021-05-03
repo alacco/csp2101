@@ -3,12 +3,17 @@
 
 #!/bin/bash
 
+YELLOW='\e[33m'
+RED='\e[31m'
+BOLD='\e[1m'
+NORMAL='\e[0m'
+
 validateMenuSelection() {
     if [[ $1 =~ ^[1-$2]$ ]]; then
         validMenuInput=true
     else
         validMenuInput=false
-        echo -e "\n\e[1;31mInvalid input\e[0m"
+        echo -e "\n${RED}${BOLD}Invalid input${NORMAL}"
     fi
 }
 
@@ -17,7 +22,7 @@ validateNumberInput() {
         validNumber=true
     else
         validNumber=false
-        echo -e "\n\e[1;31mInvalid number\e[0m"    
+        echo -e "\n${RED}${BOLD}Invalid number${NORMAL}"    
     fi
 }
 
@@ -58,11 +63,10 @@ outputResults() {
 }
 
 
-echo '================================================'
-echo 'Welcome to the Linux admin log analysis utility.'
-echo '================================================'
+echo -e "===================================================="
+echo -e "  Welcome to the Linux admin log analysis utility.  "
+echo -e "===================================================="
 until [ "$validMenuInput" = true ]; do
-    numberOfFieldsSelected=0
     until [ "$validMenuInput" = true ]; do
         echo -e '\n==================================='
         echo -e '             Main Menu              '
@@ -169,7 +173,10 @@ until [ "$validMenuInput" = true ]; do
                 4) searchDetailsArray[operator$i]="-!eq";;
             esac
         else  
-            read -p 'Enter search pattern: ' searchDetailsArray[search$i]
+            until [ "$validNumber" = true ]; do
+                read -p 'Enter port number: ' searchDetailsArray[search$i]
+                validateNumberInput ${searchDetailsArray[search$(($i))]}
+            done
         fi
         # remove previously selected fields from array
         fieldListArray=( "${fieldListArray[@]:0:$(($searchColumnMenuSelection-1))}" "${fieldListArray[@]:$searchColumnMenuSelection}" )
@@ -237,22 +244,44 @@ until [ "$validMenuInput" = true ]; do
     if [ "$searchResult" != "" ]; then
         outputResults
         echo ""
-        read -p "Enter filename to export search: " exportFilename
-        read -p "Enter directory to save file: " exportDirectory
+        until [ "$validOutputFilename" = true ]; do
+            read -p "Enter filename to export search: " exportFilename
+            if [ "$exportFilename" == "" ]; then
+                echo -e "\e[1;31mFilename cannot be empty!\e[0m"
+                vaildDirectory=false
+            else
+                validOutputFilename=true
+            fi
+        done
+        #until [ "$validDirectory" = true ]; do
+            read -p "Enter directory to save file: " exportDirectory
+            if [ "$exportDirectory" == "" ]; then
+                echo -e "\e[1;31mDirectory name cannot be empty!\e[0m"
+                exportDirectory='./'
+                vaildDirectory=true
+            else
+                if [ ! -e "$exportDirectory" ]; then
+                    echo -e '\nDirectory does not exist!'
+                    echo -e "Creating directory $exportDirectory"
+                    mkdir "$exportDirectory"
+                else
+                    echo -e '\nDirectory already exist'
+                fi
+                validDirectory=true
+            fi
+        #done
         
-        if [ ! -e "$exportDirectory" ]; then
-            echo -e '\nDirectory does not exist!'
-            echo -e "Creating directory $exportDirectory"
-            mkdir "$exportDirectory"
-        else
-            echo '\nDirectory already exist'
-        fi
-        
-        echo -e '\nExporting to $exportFilename'
-        cd $exportDirectory
-        outputResults > $exportFilename
+        echo -e "\nExporting to $exportFilename"
+        outputResults > $exportDirectory/$exportFilename
     else
         echo -e "\e[1;31mNo matching data found\e[0m"
     fi
+
+    # reset all validation varables back to false or 0 ready for next loop
+    numberOfFieldsSelected=0
+    vaildMenuInput=false
+    validNumber=false
+    validOutputFilename=false
+    validDirectory=false
 done
 exit 0

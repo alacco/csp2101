@@ -23,15 +23,24 @@ command3() {
 
 fileData=`cat serv_acc_log_03042020.csv`
 
-read -p "Enter directory to save file: " exportDirectory
 
-        if [ ! -e "$exportDirectory" ]; then
-            echo "Directory does not exist!"
-            echo "Creating $exportDirectory"
-            mkdir "$exportDirectory"
+    until [ "$validDirectory" = true ]; do
+        read -p "Enter directory to save file: " exportDirectory
+        if [ "$exportDirectory" == "" ] ; then
+            echo -e "\e[1;31mDirectory name cannot be empty!\e[0m"
+            vaildDirectory=false
         else
-            echo "Path is okay"
+            if [ ! -e "$exportDirectory" ]; then
+                echo -e '\nDirectory does not exist!'
+                echo -e "Creating directory $exportDirectory"
+                mkdir "$exportDirectory"
+            else
+                echo '\nDirectory already exist'
+            fi
+            validDirectory=true
         fi
+    done
+
 
 #cd $exportDirectory
 #ls
